@@ -44,6 +44,7 @@ INSTALLED_APPS = [
     'users.apps.UsersConfig',
     'verifications.apps.VerificationsConfig',
     'rest_framework',
+    'corsheaders',
 ]
 
 MIDDLEWARE = [
@@ -54,6 +55,7 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
+    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'meiduo_mall.urls'
@@ -213,8 +215,13 @@ REST_FRAMEWORK = {
 AUTH_USER_MODEL = 'users.User'  # Django建议AUTH_USER_MODEL的参数设置一定要放在第一次数据库迁移前！！
 
 
-
-
+# CORS
+CORS_ORIGIN_WHITELIST = (
+'http://127.0.0.1:8080',
+'http://localhost:8080',
+'http://www.meiduo.site:8080'
+)
+CORS_ALLOW_CREDENTIALS = True # 允许携带cookie
 
 
 
