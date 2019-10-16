@@ -3,6 +3,9 @@ __pycache__/
 *.py[cod]
 *$py.class
 
+# 推送时忽略.idea/缓存文件夹中所有内容
+.idea/
+
 # C extensions
 *.so
 
