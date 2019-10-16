@@ -28,7 +28,18 @@ var vm = new Vue({
 		error_name_message: '请输入5-20个字符的用户'
 	},
 	mounted: function(){
+		// this.image_code_id = this.generate_uuid();
+		// // 发起请求，请求图片验证码
+		// // axios.get("http://127.0.0.1:8000/image_codes/"+ this.image_code_id+"/")
+		// // 	.then(response => {
+		// //
+		// // 	})
+		// // 	.catch(error => {
+        // //
+		// // 	})
+		// this.image_code_url = "http://127.0.0.1:8000/image_codes/"+ this.image_code_id+"/";
 		this.generate_image_code();
+
 	},
 	methods: {
 		// 生成uuid
@@ -44,17 +55,15 @@ var vm = new Vue({
 			});
 			return uuid;
 		},
-
 		// 生成一个图片验证码的编号，并设置页面中图片验证码img标签的src属性
 		generate_image_code: function(){
 			// 生成一个编号
 			// 严格一点的使用uuid保证编号唯一， 不是很严谨的情况下，也可以使用时间戳
 			this.image_code_id = this.generate_uuid();
+
 			// 设置页面中图片验证码img标签的src属性
 			this.image_code_url = 'http://127.0.0.1:8000' + "/image_codes/" + this.image_code_id + "/";
 		},
-
-
 		check_username: function (){
 			var len = this.username.length;
 			if(len<5||len>20) {
@@ -69,14 +78,14 @@ var vm = new Vue({
 				this.error_password = true;
 			} else {
 				this.error_password = false;
-			}		
+			}
 		},
 		check_cpwd: function (){
 			if(this.password!=this.password2) {
 				this.error_check_password = true;
 			} else {
 				this.error_check_password = false;
-			}		
+			}
 		},
 		check_phone: function (){
 			var re = /^1[345789]\d{9}$/;
@@ -91,7 +100,7 @@ var vm = new Vue({
 				this.error_image_code = true;
 			} else {
 				this.error_image_code = false;
-			}	
+			}
 		},
 		check_sms_code: function(){
 			if(!this.sms_code){
@@ -116,7 +125,6 @@ var vm = new Vue({
 			this.check_sms_code();
 			this.check_allow();
 		},
-
 		// 发送短信验证码
 		send_sms_code: function () {
 			if (this.sending_flag == true) {
@@ -168,5 +176,16 @@ var vm = new Vue({
 					this.sending_flag = false;
 				})
         }
+
 	}
 });
+
+
+
+
+
+
+
+
+
+

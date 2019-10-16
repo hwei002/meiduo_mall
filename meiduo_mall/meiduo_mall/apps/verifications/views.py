@@ -9,6 +9,7 @@ from rest_framework.generics import GenericAPIView
 
 from meiduo_mall.libs.captcha.captcha import captcha
 from meiduo_mall.libs.yuntongxun.sms import CCP
+from celery_tasks.sms.tasks import send_sms_code
 from . import serializers
 from . import constants
 
@@ -53,9 +54,12 @@ class SMSCodeView(GenericAPIView):
         pl.execute()
 
         # 发送短信验证码
-        sms_code_expires = str(constants.SMS_CODE_REDIS_EXPIRES // 60)
-        ccp = CCP()
-        ccp.send_template_sms(mobile, [sms_code, sms_code_expires], constants.SMS_CODE_TEMP_ID)
+        # sms_code_expires = str(constants.SMS_CODE_REDIS_EXPIRES // 60)
+        # ccp = CCP()
+        # ccp.send_template_sms(mobile, [sms_code, sms_code_expires], constants.SMS_CODE_TEMP_ID)
+
+        # 使用celery完成发送短信的异步任务
+        send_sms_code.delay(mobile, sms_code)
 
         return Response({"message": "OK"})
 
