@@ -5,8 +5,10 @@ from redis.exceptions import RedisError
 from rest_framework.response import Response
 from rest_framework import status
 
-# 获取日志记录器【在配置文件中定义的logger，用来记录日志】
+
+# 获取日志记录器
 logger = logging.getLogger('django')
+
 
 def exception_handler(exc, context):
     """
