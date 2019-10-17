@@ -11,25 +11,27 @@ https://docs.djangoproject.com/en/1.11/ref/settings/
 """
 
 import os
+import sys
+import datetime
 
 # Build paths inside the project like this: os.path.join(BASE_DIR, ...)
 BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
 
-import sys
+# sys.path保存了python解释器的导包路径
+sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))
 
-sys.path.insert(0, os.path.join(BASE_DIR, 'apps'))  # 新增添加apps应用的导包路径
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/1.11/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = '1&%8%9+s+hh+x4g&l&r8nhc6@r(y05n4s2n@t^-w4ba@u72gu9'
+SECRET_KEY = '&+q5st03g9)81))xki7gyznnu_3f$15ovxwq@i2h0(cinq3v$4'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['api.meiduo.site']
 
 
 # Application definition
@@ -41,13 +43,14 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
-    'users.apps.UsersConfig',
-    'verifications.apps.VerificationsConfig',
     'rest_framework',
     'corsheaders',
+    'users.apps.UsersConfig',
+    'verifications.apps.VerificationsConfig',
 ]
 
 MIDDLEWARE = [
+    'corsheaders.middleware.CorsMiddleware',
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',
     'django.middleware.common.CommonMiddleware',
@@ -55,7 +58,6 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    'corsheaders.middleware.CorsMiddleware',
 ]
 
 ROOT_URLCONF = 'meiduo_mall.urls'
@@ -85,7 +87,7 @@ WSGI_APPLICATION = 'meiduo_mall.wsgi.application'
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',
-        'HOST': '127.0.0.1',  # 数据库主机
+        'HOST': '127.0.0.1',  # '10.211.55.5',  # 数据库主机
         'PORT': 3306,  # 数据库端口
         'USER': 'meiduo',  # 数据库用户名
         'PASSWORD': 'meiduo',  # 数据库用户密码
@@ -94,7 +96,8 @@ DATABASES = {
 }
 
 
-# REDIS配置
+
+# Redis
 CACHES = {
     "default": {
         "BACKEND": "django_redis.cache.RedisCache",
@@ -120,7 +123,6 @@ CACHES = {
 }
 SESSION_ENGINE = "django.contrib.sessions.backends.cache"
 SESSION_CACHE_ALIAS = "session"
-
 
 # Password validation
 # https://docs.djangoproject.com/en/1.11/ref/settings/#auth-password-validators
@@ -161,7 +163,7 @@ USE_TZ = True
 STATIC_URL = '/static/'
 
 
-# 日志功能的配置
+# 日志处理
 LOGGING = {
     'version': 1,
     'disable_existing_loggers': False,
@@ -188,14 +190,14 @@ LOGGING = {
         'file': {
             'level': 'INFO',
             'class': 'logging.handlers.RotatingFileHandler',
-            'filename': os.path.join(os.path.dirname(BASE_DIR), "logs/meiduo.log"),  # 日志文件的位置
+            'filename': os.path.join(os.path.dirname(BASE_DIR), "logs/meiduo.log"),
             'maxBytes': 300 * 1024 * 1024,
             'backupCount': 10,
             'formatter': 'verbose'
         },
     },
     'loggers': {
-        'django': {  # 定义了一个名为django的日志器
+        'django': {
             'handlers': ['console', 'file'],
             'propagate': True,
         },
@@ -204,31 +206,36 @@ LOGGING = {
 
 
 # REST配置
-# 修改Django REST framework的默认异常处理方法，补充处理数据库异常和Redis异常。
 REST_FRAMEWORK = {
     # 异常处理
     'EXCEPTION_HANDLER': 'meiduo_mall.utils.exceptions.exception_handler',
+
+    # 认证机制后端
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'rest_framework_jwt.authentication.JSONWebTokenAuthentication',
+        'rest_framework.authentication.SessionAuthentication',
+        'rest_framework.authentication.BasicAuthentication',
+    ),
 }
 
+JWT_AUTH = {
+    # JWT 的有效期
+    'JWT_EXPIRATION_DELTA': datetime.timedelta(days=1),
+    'JWT_RESPONSE_PAYLOAD_HANDLER': 'users.utils.jwt_response_payload_handler',
+}
 
-# django认证系统使用的模型类【告知Django认证系统使用我们自定义的模型类】
-AUTH_USER_MODEL = 'users.User'  # Django建议AUTH_USER_MODEL的参数设置一定要放在第一次数据库迁移前！！
+# Django认证系统使用的模型类
+AUTH_USER_MODEL = 'users.User'
 
+# Django的认证后端方法
+AUTHENTICATION_BACKENDS = [
+    'users.utils.UsernameMobileAuthBackend',
+]
 
-# CORS
 CORS_ORIGIN_WHITELIST = (
-'http://127.0.0.1:8080',
-'http://localhost:8080',
-'http://www.meiduo.site:8080'
+    'http://127.0.0.1:8080',
+    'http://localhost:8080',
+    'http://www.meiduo.site:8080',
+    'http://api.meiduo.site:8000'
 )
-CORS_ALLOW_CREDENTIALS = True # 允许携带cookie
-
-
-
-
-
-
-
-
-
-
+CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie

@@ -1,6 +1,8 @@
 var vm = new Vue({
 	el: '#app',
 	data: {
+		host,
+
 		error_name: false,
 		error_password: false,
 		error_check_password: false,
@@ -62,7 +64,7 @@ var vm = new Vue({
 			this.image_code_id = this.generate_uuid();
 
 			// 设置页面中图片验证码img标签的src属性
-			this.image_code_url = 'http://127.0.0.1:8000' + "/image_codes/" + this.image_code_id + "/";
+			this.image_code_url = this.host + "/image_codes/" + this.image_code_id + "/";
 		},
 		check_username: function (){
 			var len = this.username.length;
@@ -74,7 +76,7 @@ var vm = new Vue({
 			}
 			// 检查重名
 			if (this.error_name == false) {
-				axios.get("http://127.0.0.1:8000" + '/usernames/' + this.username + '/count/', {
+				axios.get(this.host+'/usernames/' + this.username + '/count/', {
 						responseType: 'json'
 					})
 					.then(response => {
@@ -96,14 +98,14 @@ var vm = new Vue({
 				this.error_password = true;
 			} else {
 				this.error_password = false;
-			}
+			}		
 		},
 		check_cpwd: function (){
 			if(this.password!=this.password2) {
 				this.error_check_password = true;
 			} else {
 				this.error_check_password = false;
-			}
+			}		
 		},
 		check_phone: function (){
 			var re = /^1[345789]\d{9}$/;
@@ -114,7 +116,7 @@ var vm = new Vue({
 				this.error_phone = true;
 			}
 			if (this.error_phone == false) {
-				axios.get( "http://127.0.0.1:8000" + '/mobiles/'+ this.mobile + '/count/', {
+				axios.get(this.host+'/mobiles/'+ this.mobile + '/count/', {
 						responseType: 'json'
 					})
 					.then(response => {
@@ -135,7 +137,7 @@ var vm = new Vue({
 				this.error_image_code = true;
 			} else {
 				this.error_image_code = false;
-			}
+			}	
 		},
 		check_sms_code: function(){
 			if(!this.sms_code){
@@ -163,7 +165,7 @@ var vm = new Vue({
 
 			if(this.error_name == false && this.error_password == false && this.error_check_password == false
 				&& this.error_phone == false && this.error_sms_code == false && this.error_allow == false) {
-				axios.post( "http://127.0.0.1:8000" + '/users/', {
+				axios.post(this.host+'/users/', {
 						username: this.username,
 						password: this.password,
 						password2: this.password2,
@@ -208,7 +210,7 @@ var vm = new Vue({
 			}
 
 			// 向后端接口发送请求，让后端发送短信验证码
-			axios.get('http://127.0.0.1:8000/sms_codes/' + this.mobile + '/?text=' + this.image_code+'&image_code_id='+ this.image_code_id, {
+			axios.get(this.host+'/sms_codes/' + this.mobile + '/?text=' + this.image_code+'&image_code_id='+ this.image_code_id, {
 					// 向后端声明，请返回json数据
 					responseType: 'json'
 				})
