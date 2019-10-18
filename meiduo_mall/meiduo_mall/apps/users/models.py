@@ -72,3 +72,7 @@ class User(AbstractUser):
                 return False
             else:
                 return True
+
+
+
+
