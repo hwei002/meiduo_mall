@@ -1,10 +1,11 @@
 from django.shortcuts import render
-from rest_framework.generics import CreateAPIView, GenericAPIView
+from rest_framework.generics import CreateAPIView, GenericAPIView, RetrieveAPIView, UpdateAPIView
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status
 from rest_framework import mixins
 import re
+from rest_framework.permissions import IsAuthenticated
 
 from . import serializers
 from .models import User
@@ -117,6 +118,64 @@ class PasswordView(mixins.UpdateModelMixin, GenericAPIView):
         return self.update(request, pk)
 
 
+class UserDetailView(RetrieveAPIView):
+    """用户详情信息
+    /users/<pk>/
+
+    /user/
+    """
+    # def get(self, request):
+    #     request.user
+    #
+    # def post(self, request):
+
+    # 在类视图对象中也保存了请求对象request
+    # request对象的user属性是通过认证检验之后的请求用户对象
+    # 类视图对象还有kwargs属性
+
+    serializer_class = serializers.UserDetailSerializer
+    # 补充通过认证才能访问接口的权限
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        """
+        返回请求的用户对象
+        :return: user
+        """
+        return self.request.user
+
+
+class EmailView(UpdateAPIView):
+    """
+    保存邮箱
+    /email/
+    """
+    serializer_class = serializers.EmailSerializer
+    permission_classes = [IsAuthenticated]
+
+    def get_object(self):
+        return self.request.user
+
+
+    # def get_serializer(self, *args, **kwargs):
+    #     return EmailSerialier(self.request.user, data=self.request.data)
+
+
+class EmailVerifyView(APIView):
+    """邮箱验证"""
+    def get(self, request):
+        # 获取token
+        token = request.query_params.get('token')
+        if not token:
+            return Response({'缺少token'}, status=status.HTTP_400_BAD_REQUEST)
+
+        # 校验  保存
+        result = User.check_email_verify_token(token)
+
+        if result:
+            return Response({"message": "OK"})
+        else:
+            return Response({"非法的token"}, status=status.HTTP_400_BAD_REQUEST)
 
 
 

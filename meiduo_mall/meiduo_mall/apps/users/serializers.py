@@ -5,6 +5,7 @@ import re
 import logging
 from rest_framework_jwt.settings import api_settings
 from .utils import get_user_by_account
+from celery_tasks.emails.tasks import send_verify_email
 
 
 from .models import User
@@ -173,3 +174,47 @@ class ResetPasswordSerializer(serializers.ModelSerializer):
         instance.set_password(validated_data['password'])
         instance.save()
         return instance
+
+
+class UserDetailSerializer(serializers.ModelSerializer):
+    """用户个人信息序列化器"""
+    class Meta:
+        model = User
+        fields = ('id', 'username', 'mobile', 'email', 'email_active')
+
+
+class EmailSerializer(serializers.ModelSerializer):
+    class Meta:
+        model = User
+        fields = ('id', 'email')
+        extra_kwargs = {
+            'email': {
+                'required': True
+            }
+        }
+
+    def update(self, instance, validated_data):
+        """重新更新方法，添加发送邮件
+        instance  == user
+        """
+        email = validated_data['email']
+        instance.email = email
+        instance.save()
+
+        # 生成激活链接
+        verify_url = instance.generate_email_verify_url()
+        # 发送验证邮件
+        send_verify_email.delay(email, verify_url)
+        return instance
+
+
+
+
+
+
+
+
+
+
+
+
