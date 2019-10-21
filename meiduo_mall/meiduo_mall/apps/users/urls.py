@@ -1,8 +1,9 @@
 from django.conf.urls import url
 from rest_framework_jwt.views import obtain_jwt_token
-
+from rest_framework.routers import DefaultRouter
 
 from . import views
+
 
 urlpatterns = [
     url(r'^users/$', views.UserView.as_view()),
@@ -16,3 +17,8 @@ urlpatterns = [
     url(r'^emails/$', views.EmailView.as_view()),  # 用户个人中心数据
     url(r'^emails/verification/$', views.EmailVerifyView.as_view()),  # 用户个人中心数据
 ]
+
+router = DefaultRouter()
+router.register('addresses', views.AddressViewSet, base_name='addresses')
+
+urlpatterns += router.urls
