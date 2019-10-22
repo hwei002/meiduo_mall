@@ -55,7 +55,7 @@ var vm = new Vue({
         logout: function(){
             sessionStorage.clear();
             localStorage.clear();
-            location.href = '/login.htmls';
+            location.href = '/login.html';
         },
         // 控制页面标签页展示
         on_tab_content: function(name){
@@ -78,9 +78,25 @@ var vm = new Vue({
                 this.sku_count--;
             }
         },
-        // 添加购物车
-        add_cart: function(){
-
+         // 添加购物车
+        add_cart: function() {
+            axios.post(this.host + '/cart/', {
+                sku_id: parseInt(this.sku_id),
+                count: this.sku_count
+            }, {
+                headers: {
+                    'Authorization': 'JWT ' + this.token
+                },
+                responseType: 'json',
+                withCredentials: true
+            })
+                .then(response => {
+                    this.cart_total_count += response.data.count;
+                })
+                .catch(error => {
+                    alert(error.response.message[0]);
+                    console.log(error.response.data);
+                })
         },
         // 获取购物车数据
         get_cart: function(){

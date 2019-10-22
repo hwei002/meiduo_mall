@@ -181,7 +181,7 @@ var vm = new Vue({
 						localStorage.username = response.data.username;
 						localStorage.user_id = response.data.user_id;
 
-						location.href = '/index.htmls';
+						location.href = '/index.html';
 					})
 					.catch(error=> {
 						if (error.response.status == 400) {

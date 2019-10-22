@@ -48,11 +48,11 @@ var vm = new Vue({
                 })
                 .catch(error => {
                     if (error.response.status==401 || error.response.status==403) {
-                        location.href = '/login.htmls?next=/user_center_info.htmls';
+                        location.href = '/login.html?next=/user_center_info.html';
                     }
                 });
         } else {
-            location.href = '/login.htmls?next=/user_center_info.htmls';
+            location.href = '/login.html?next=/user_center_info.html';
         }
     },
     methods: {
@@ -60,7 +60,7 @@ var vm = new Vue({
         logout: function(){
             sessionStorage.clear();
             localStorage.clear();
-            location.href = '/login.htmls';
+            location.href = '/login.html';
         },
         // 保存email
         save_email: function(){
