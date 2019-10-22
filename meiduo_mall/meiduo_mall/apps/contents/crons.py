@@ -67,12 +67,12 @@ def generate_static_index_html():
         'contents': contents
     }
 
-    template = loader.get_template('index.htmls')
+    template = loader.get_template('index.html')
     html_text = template.render(context)
 
     #  return render() -> HttpResponse(html文本)
 
     # 写到文件中，保存下来，形成 静态文件
-    file_path = os.path.join(settings.GENERATED_STATIC_HTML_FILES_DIR, 'index.htmls')
+    file_path = os.path.join(settings.GENERATED_STATIC_HTML_FILES_DIR, 'index.html')
     with open(file_path, 'w') as f:
         f.write(html_text)
