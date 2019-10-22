@@ -55,7 +55,7 @@ var vm = new Vue({
             .catch(error => {
                 status = error.response.status;
                 if (status == 401 || status == 403) {
-                    location.href = 'login.html?next=/user_center_site.html';
+                    location.href = 'login.htmls?next=/user_center_site.htmls';
                 } else {
                     alert(error.response.data.detail);
                 }
@@ -96,7 +96,7 @@ var vm = new Vue({
         logout: function(){
             sessionStorage.clear();
             localStorage.clear();
-            location.href = '/login.html';
+            location.href = '/login.htmls';
         },
         clear_all_errors: function(){
             this.error_receiver = false;

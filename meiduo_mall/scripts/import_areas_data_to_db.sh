@@ -1,3 +1,3 @@
 #!/bin/bash
 
-mysql -h10.211.55.5 -uroot -pmysql meiduo_27 < ./areas.sql
+mysql -h127.0.0.1 -uroot -pmysql meiduo_mall < ./areas.sql
