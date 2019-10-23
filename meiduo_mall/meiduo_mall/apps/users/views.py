@@ -9,6 +9,7 @@ import re
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.decorators import action
 from rest_framework.viewsets import GenericViewSet
+from rest_framework_jwt.views import ObtainJSONWebToken
 
 from . import serializers
 from .models import User
@@ -17,6 +18,7 @@ from .utils import get_user_by_account
 from . import constants
 from goods.models import SKU
 from goods.serializers import SKUSerializer
+from carts.utils import merge_cart_cookie_to_redis
 
 # Create your views here.
 
@@ -278,6 +280,47 @@ class UserHistoryView(mixins.CreateModelMixin, GenericAPIView):
         # 使用序列化器序列化
         serializer = SKUSerializer(sku_list, many=True)
         return Response(serializer.data)
+
+
+class UserAuthorizationView(ObtainJSONWebToken):
+
+    def post(self, request):
+        # 调用jwt扩展的方法，对用户登录的数据进行验证
+        response = super().post(request)
+
+        # 如果用户登录成功，进行购物车数据合并
+        serializer = self.get_serializer(data=request.data)
+        if serializer.is_valid():
+            # 表示用户登录成功
+            user = serializer.validated_data.get("user")
+            # 合并购物车
+            response = merge_cart_cookie_to_redis(request, response, user)
+
+        return response
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
