@@ -49,6 +49,9 @@ INSTALLED_APPS = [
     'ckeditor_uploader',  # 富文本编辑器上传图片模块
     'django_crontab',  # 定时任务
     'haystack',
+    'xadmin',
+    'crispy_forms',
+    'reversion',
     'users.apps.UsersConfig',
     'verifications.apps.VerificationsConfig',
     'oauth.apps.OauthConfig',
@@ -57,6 +60,7 @@ INSTALLED_APPS = [
     'contents.apps.ContentsConfig',
     'carts.apps.CartsConfig',
     'orders.apps.OrdersConfig',
+    'payment.apps.PaymentConfig',
 ]
 
 MIDDLEWARE = [
@@ -102,10 +106,19 @@ DATABASES = {
         'USER': 'meiduo',  # 数据库用户名
         'PASSWORD': 'meiduo',  # 数据库用户密码
         'NAME': 'meiduo_mall'  # 数据库名字
-    }
+    },
+    'slave': {
+        'ENGINE': 'django.db.backends.mysql',
+        'HOST': '127.0.0.1',  # 数据库主机
+        'PORT': 8306,  # 数据库端口
+        'USER': 'root',  # 数据库用户名
+        'PASSWORD': 'mysql',  # 数据库用户密码
+        'NAME': 'meiduo_mall'  # 数据库名字
+    },
 }
 
-
+# 数据库路由
+DATABASE_ROUTERS = ['meiduo_mall.utils.db_routers.MasterSlaveDBRouter']
 
 # Redis
 CACHES = {
@@ -263,7 +276,7 @@ CORS_ORIGIN_WHITELIST = (
     'http://127.0.0.1:8080',
     'http://localhost:8080',
     'http://www.meiduo.site:8080',
-    'http://api.meiduo.site:8000'
+    'http://api.meiduo.site:8000',
 )
 CORS_ALLOW_CREDENTIALS = True  # 允许携带cookie
 
@@ -337,5 +350,10 @@ HAYSTACK_CONNECTIONS = {
 HAYSTACK_SIGNAL_PROCESSOR = 'haystack.signals.RealtimeSignalProcessor'
 
 
+# 支付宝
+ALIPAY_APPID = 2016081600258081
+ALIPAY_DEBUG = True
+ALIPAY_GATEWAY_URL = 'https://openapi.alipaydev.com/gateway.do'
 
-
+# 收集静态文件的目录
+STATIC_ROOT = os.path.join(os.path.dirname(os.path.dirname(BASE_DIR)), 'front_end_pc/static')
